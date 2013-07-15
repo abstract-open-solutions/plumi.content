@@ -48,7 +48,10 @@
                     video_href string:${here/absolute_url}/@@download/video_file/${context/video_file/filename};
                     video_source string:${here/absolute_url}/video_file;">
 		<div class="roundborder rounded">
-        <div tal:replace="structure provider:plone.abovecontent" />
+        <tal:comment replace="nothing">
+          why placing "abovecontent" here? it duplicates associated viewlets
+        </tal:comment>
+        <!-- <div tal:replace="structure provider:plone.abovecontent" /> -->
         <div tal:replace="structure provider:plone.abovecontenttitle" tal:condition="not:ajax_load" />
         <h1 class="documentFirstHeading"> 
             <metal:field use-macro="python:here.widget('title', mode='view')">
