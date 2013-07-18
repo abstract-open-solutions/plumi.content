@@ -255,58 +255,49 @@ class PlumiVideo(base.ATCTContent):
     
     # -*- Your ATSchema to Python Property Bridges Here ... -*-
     thumbnailImageDescription = atapi.ATFieldProperty('thumbnailImageDescription')
-
     DateProduced = atapi.ATFieldProperty('DateProduced')
-
     FullDescription = atapi.ATFieldProperty('FullDescription')
-
     Distributor = atapi.ATFieldProperty('Distributor')
-
     WebsiteURL = atapi.ATFieldProperty('WebsiteURL')
-
     ProductionCompanyName = atapi.ATFieldProperty('ProductionCompanyName')
-
     ProjectName = atapi.ATFieldProperty('ProjectName')
-
     VideoLanguage = atapi.ATFieldProperty('VideoLanguage')
-
     ProducerMailingAddress = atapi.ATFieldProperty('ProducerMailingAddress')
-
     ProducerEmail = atapi.ATFieldProperty('ProducerEmail')
-
     Director = atapi.ATFieldProperty('Director')
-
     Producer = atapi.ATFieldProperty('Producer')
-
     thumbnailImage = atapi.ATFieldProperty('thumbnailImage')
-
     Countries = atapi.ATFieldProperty('Countries')
-
     Categories = atapi.ATFieldProperty('Categories')
-
     Genre = atapi.ATFieldProperty('Genre')
-
     video_file = atapi.ATFieldProperty('video_file')
 
-
     def plumiVideoDuration(self):
-      """ Get the duration of the uploaded video file """
-      strDuration = ''
-      try:
-        filename = self.video_file.getBlob().committed()
-        if filename:
-            videoMetaData = extract(filename)
-            tdelta = videoMetaData.get('duration')
-            seconds = tdelta.seconds
-            hours, remainder = divmod(seconds, 3600)
-            minutes, seconds = divmod(remainder, 60)            
-            if hours > 0:
-                strDuration += "%.2d:" % hours                
-            strDuration += "%.2d:%.2d" % (minutes,seconds)
-      except:
-        pass
-        
-      return strDuration
+        """ Get the duration of the uploaded video file """
+        strDuration = ''
+        try:
+            filename = self.video_file.getBlob().committed()
+            if filename:
+                videoMetaData = extract(filename)
+                tdelta = videoMetaData.get('duration')
+                seconds = tdelta.seconds
+                hours, remainder = divmod(seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)            
+                if hours > 0:
+                    strDuration += "%.2d:" % hours                
+                strDuration += "%.2d:%.2d" % (minutes,seconds)
+        except:
+            pass
+        return strDuration
+
+    def getThumbnailImageDescription(self):
+        """ override default getter """
+        value = self.getField('thumbnailImageDescription').get(self)
+        if not value:
+            title =  self.Title() or self.getId()
+            value = 'Image: %s' % title
+        return value
+
           
 
 atapi.registerType(PlumiVideo, PROJECTNAME)
