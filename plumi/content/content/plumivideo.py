@@ -294,8 +294,7 @@ class PlumiVideo(base.ATCTContent):
         """ override default getter """
         value = self.getField('thumbnailImageDescription').get(self)
         if not value:
-            title =  self.Title() or self.getId()
-            value = 'Image: %s' % title
+            value =  self.Title() or self.getId()
         return value
 
           
