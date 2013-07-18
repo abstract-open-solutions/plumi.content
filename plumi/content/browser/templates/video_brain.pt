@@ -2,7 +2,7 @@
                     thumb string:${view/url}/thumbnailImage_thumb;
                     fullThumb string:${view/url}/thumbnailImage_preview;
                     hasThumb video/hasImageAndCaption;
-                    thumbCaption string:'';">
+                    thumbCaption video/hasImageAndCaption/caption">
 
  <span tal:omit-tag="" tal:condition="not:options/feature_video">
   <tal:image condition="hasThumb">
