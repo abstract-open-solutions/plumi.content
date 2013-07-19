@@ -23,6 +23,9 @@
     <adapter factory=".adapters.TopicVideosProvider"
              provides=".interfaces.IVideosProvider" />
     
+    <adapter factory=".adapters.CollectionVideosProvider"
+             provides=".interfaces.IVideosProvider" />
+    
     <adapter factory=".adapters.OrderedFolderVideosProvider"
              provides=".interfaces.IVideosProvider" />
     
@@ -98,20 +101,21 @@
         />
     
     <browser:page
+        for="zope.app.container.interfaces.IContainer"
+        name="video_listing_view"
+        template="templates/video_listing_view.pt"
+        permission="zope2.View"
+        menu="plone_displayviews"
+        title="Video listing view"
+        />
+    
+    <browser:page
         name="callout_view"
         for="plumi.content.interfaces.IPlumiCallOut"
         class=".callout.CalloutView"
         template="templates/plumi_callout_view.pt"
         permission="zope2.View"
         />
-    
-    <browser:page
-        for="zope.app.container.interfaces.IContainer"
-        name="video_listing_view"
-        template="templates/video_listing_view.pt"
-        permission="zope2.View"
-        />
-    
     
     <browser:page
         name="RSS2"
