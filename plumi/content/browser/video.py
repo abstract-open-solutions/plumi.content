@@ -212,6 +212,7 @@ class VideoView(BrowserView):
         
         return dict(id=video_language_id, url=url + video_language_id, title=language_title)
 
+    # TODO 2013-07-19: make this configurable: show videos from same categories for instance
     def authors_latest(self):
         folder_path = '/'.join(self.context.aq_inner.aq_parent.getPhysicalPath())
         catalog = getToolByName(self.context, "portal_catalog")
@@ -226,6 +227,7 @@ class VideoView(BrowserView):
         except ValueError:
             # we got less than 15 brains... no worries
             pass
+        # FIXME 2013-07-19: way too many loops here! and no cache at all!
         videos = [queryMultiAdapter((brain, self), IPlumiVideoBrain) for brain in brains ]
         videos = [video for video in videos if video.url != self.context.absolute_url()]
         return videos

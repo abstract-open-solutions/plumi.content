@@ -10,6 +10,11 @@ from interfaces import IPlumiVideoBrain
 from taxonomy import CategoriesProvider
 
 
+# TODO 2013-07-19: make video listing reusable,
+# something that in templates can be used like:
+# listing_renderer context/@@listing_renderer;
+# renderers python: listing_renderers.get(brains=brains)
+# or something like that, which allows to pass arbitrary brains
 class VideosListing(CategoriesProvider):
     """
     This browser view is convenient to fetch videos informations

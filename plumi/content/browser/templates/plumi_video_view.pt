@@ -305,27 +305,26 @@
         </div> <!-- transcoding rights tal -->
 	</div>
 
+    <tal:comment replace="nothing">
+      We should make this listing configurable, like "show related videos" and alike.
+      And we should use video_listing once improved.
+    </tal:comment>
     <div id="authors_latest" tal:define="other_videos  view/authors_latest|nothing">
-        <h1 class="documentFirstHeading" tal:condition="other_videos">Other videos by this member</h1>
-    <ul>
-        <li tal:repeat="video other_videos">
-            <a class="video-download" tal:attributes="href string:${video/url}/view; title video/context/Description">
-                <img title="" alt="" tal:attributes="alt video/video_title;
-                                                     src string:${video/url}/thumbnailImage_thumb" />
-                <h5 class="featuredItemTitle" tal:content="video/video_title" />
-            </a>
-            <p class="discreet">
-            Posted on <span class="posted-date" tal:content="video/post_date" />
-            </p>
-            <div class="duration" tal:content="video/context/videoDuration" />
-        </li>
-    </ul>
+      <h1 class="documentFirstHeading" tal:condition="other_videos">Other videos by this member</h1>
+
+      <dl class="featured-block videos-listing">
+        <dd class="featuredItem"
+            tal:repeat="obj other_videos">
+          <tal:video replace="structure obj/render_listing" />
+        </dd>
+      </dl>
+    </div>
+
     <script>
         // using jQuery
         $('audio').mediaelementplayer();
     </script>
 
-    </div>      
     </tal:main-macro>
 </metal:main>
 </body>
