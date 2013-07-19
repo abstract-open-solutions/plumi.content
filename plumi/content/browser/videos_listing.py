@@ -1,18 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from zope.component import queryMultiAdapter
-from interfaces import IVideosProvider, IPlumiVideoBrain
+from zope.interface import Interface
+
+from plone.memoize.view import memoize as view_memoize
+
+from interfaces import IVideosProvider
+from interfaces import IPlumiVideoBrain
 from taxonomy import CategoriesProvider
 
 
 class VideosListing(CategoriesProvider):
-    u"""This browser view is convenient to fetch videos informations
+    """
+    This browser view is convenient to fetch videos informations
     necessary to the display of a videos provider.
     """
-    def __init__(self, context, request):
-        super(VideosListing, self).__init__(context, request)
-        self.videos = IVideosProvider(context).videos
-        self.empty = bool(not self.videos)
+
+    @property
+    @view_memoize
+    def videos(self):
+        return IVideosProvider(self.context).videos
+
+    @property
+    def empty(self):
+        return bool(not self.videos)
 
     @property
     def renderers(self):

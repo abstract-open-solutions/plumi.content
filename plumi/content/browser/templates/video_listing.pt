@@ -3,32 +3,39 @@
                            b_size python:20;
                            b_start python:0;b_start request/b_start | b_start;
                            batch python:Batch(results, b_size, int(b_start));
-			   template_id string:video_listing_view">
-  <div class="discreet videocount">There are <b tal:content="python:len(results)"></b> videos available</div>
+			                     template_id string:video_listing_view">
+                           
+  <p class="discreet videocount"
+     tal:condition="not: view/empty"
+     i18n:translate="">
+    There are <b i18n:name="video_count"
+                 tal:content="python:len(results)" /> videos available
+  </p>
+  <p class="discreet"
+     tal:condition="view/empty"
+     i18n:domain="plumi"
+     i18n:translate="description_no_items_in_topic">
+    There are currently no results for this search.
+  </p>
+
   <tal:listing condition="results">
     <!-- Navigation -->
     <div metal:use-macro="here/batch_macros/macros/navigation" />
 	      
     <metal:listingmacro define-macro="listing">
       <dl class="featured-block videos-listing">
-	
-	<dd class="featuredItem"
-	    tal:repeat="obj batch">
-	  <tal:video replace="structure obj/render_listing" />
-	</dd>
+      	<dd class="featuredItem"
+      	    tal:repeat="obj batch">
+      	  <tal:video replace="structure obj/render_listing" />
+      	</dd>
       </dl>
     </metal:listingmacro>
+
     <!-- Navigation -->
     <div metal:use-macro="here/batch_macros/macros/navigation" />
     
   </tal:listing>
 
-  <!--  
-  <p class="discreet"
-     tal:condition="view/empty"
-     i18n:domain="plumi"
-     i18n:translate="description_no_items_in_topic">
-    There are currently no results for this search.
-  </p>-->
+  
 	    
 </tal:topiccontents>
