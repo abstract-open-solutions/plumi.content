@@ -14,54 +14,53 @@ from plumi.content.interfaces import IPlumiVideo
 
 
 @indexer(IPlumiVideo)
-def hasImageAndCaption(object,**kw):
+def hasImageAndCaption(obj, **kw):
     logger=logging.getLogger('plumi.content.indexes')
 
-    logger.debug('hasImageAndCaption - have %s ' % object )
-    img = object.getThumbnailImage()
+    logger.debug('hasImageAndCaption - have %s ' % obj )
+    img = obj.getThumbnailImage()
     #check that the image is set
+    md = {'image': False, 'caption': u''}
     if img is not None and img is not '':
-        caption = object.getThumbnailImageDescription() or u''
+        caption = obj.getThumbnailImageDescription() or u''
         md = {'image': True, 'caption': caption }
-    else:
-        md = {'image': False, 'caption': u''}
 
-    logger.debug('hasImageAndCaption returning %s  . thumbnail object is %s' %
-                 (md, object.getThumbnailImage()))
+    logger.debug('hasImageAndCaption returning %s  . thumbnail obj is %s' %
+                 (md, obj.getThumbnailImage()))
     return md
 
 @indexer(IPlumiVideo)
-def isTranscodedPlumiVideoObj(object,**kw):
+def isTranscodedPlumiVideoObj(obj,**kw):
     logger=logging.getLogger('plumi.content.indexes')
-    logger.debug(' isTranscodedPlumiVideoObj - have %s ' % object )
+    logger.debug(' isTranscodedPlumiVideoObj - have %s ' % obj )
     try:
         tt = getUtility(ITranscodeTool)
-        return tt[object.UID()]['video_file']
+        return tt[obj.UID()]['video_file']
     except:
         return
 
 @indexer(IPlumiVideo)
-def isPublishablePlumiVideoObj(object,**kw):
+def isPublishablePlumiVideoObj(obj,**kw):
     logger=logging.getLogger('plumi.content.indexes')
-    logger.debug(' isPublishablePlumiVideoObj - have %s ' % object )
+    logger.debug(' isPublishablePlumiVideoObj - have %s ' % obj )
 
-    portal_workflow = getToolByName(object,'portal_workflow')
-    portal_membership = getToolByName(object,'portal_membership')
-    portal_contentlicensing = getToolByName(object,'portal_contentlicensing')
+    portal_workflow = getToolByName(obj,'portal_workflow')
+    portal_membership = getToolByName(obj,'portal_membership')
+    portal_contentlicensing = getToolByName(obj,'portal_contentlicensing')
 
     #wf state
-    item_state = portal_workflow.getInfoFor(object, 'review_state', '')
+    item_state = portal_workflow.getInfoFor(obj, 'review_state', '')
     #name of creator 
-    member_name = object.Creator()
-    #get the actual user object
+    member_name = obj.Creator()
+    #get the actual user obj
     user = portal_membership.getMemberById(member_name)
-    object.plone_log("Item %s by %s is in state %s. user is %s " % (object.absolute_url(), member_name, item_state,user))
+    obj.plone_log("Item %s by %s is in state %s. user is %s " % (obj.absolute_url(), member_name, item_state,user))
     if user is None:
-        object.plone_log("No matching members??")
+        obj.plone_log("No matching members??")
 
     if user is not None and item_state == 'published':
-        (url,length,type) = object.getFileAttribs()
-        cclicense = portal_contentlicensing.getLicenseAndHolderFromObject(object)
+        (url,length,type) = obj.getFileAttribs()
+        cclicense = portal_contentlicensing.getLicenseAndHolderFromobj(obj)
         cclicense_text = portal_contentlicensing.DefaultSiteLicense[0]
         cclicense_url  = None
         if cclicense[1][1] != 'None':
@@ -71,16 +70,16 @@ def isPublishablePlumiVideoObj(object,**kw):
 
         d = {
               'published':True,
-              'item_title': object.Title(),
+              'item_title': obj.Title(),
               'item_creator_email': user.getProperty('email',''),
               'item_creator_fullname':user.getProperty('fullname',''),
-              'subject': object.Subject(),
-              'item_rfc822_datetime': DateTime(object.Date()).rfc822(),
-              'item_rfc3339_datetime': DateTime(object.Date()).HTML4(),
+              'subject': obj.Subject(),
+              'item_rfc822_datetime': DateTime(obj.Date()).rfc822(),
+              'item_rfc3339_datetime': DateTime(obj.Date()).HTML4(),
               'file_url': url,
               'file_length':length,
               'file_type':type,
-              'item_url':object.absolute_url(),
+              'item_url':obj.absolute_url(),
               'license_text':cclicense_text,
               'license_url':cclicense_url
             }
@@ -90,9 +89,9 @@ def isPublishablePlumiVideoObj(object,**kw):
     return d
 
 @indexer(IPlumiVideo)
-def videoDuration(object,**kw):
+def videoDuration(obj,**kw):
     logger=logging.getLogger('plumi.content.indexes')
-    logger.debug('videoDuration - have %s ' % object )
-    duration = object.plumiVideoDuration()
+    logger.debug('videoDuration - have %s ' % obj )
+    duration = obj.plumiVideoDuration()
     logger.debug(' videoDuration returning %s  ' % (duration))
     return duration
