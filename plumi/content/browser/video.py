@@ -47,6 +47,10 @@ class VideoView(BrowserView):
         self.vocab_tool = getToolByName(self.context, "portal_vocabularies")
 
     @property
+    def transcode_helpers(self):
+        return self.context.restrictedTraverse('@@transcode-helpers')
+
+    @property
     def video_info(self):
         annotations = IAnnotations(self.context, None)
         return annotations.get('plumi.video_info')
@@ -142,13 +146,13 @@ class VideoView(BrowserView):
     def transcoding(self):
         ret = {}
         try:
-            tt = getUtility(ITranscodeTool)
-            entry = tt[self.context.UID()]['video_file']
-            for k in entry.keys():
-                ret[k] = [entry[k]['status'],
-                          entry[k]['status'] == 'ok' and entry[k]['address'] + '/' + entry[k]['path'] or \
-                          entry[k]['status'] == 'pending' and \
-                          tt.getProgress(entry[k]['jobId']) or '0']
+            fname = self.transcode_helpers.fieldname
+            info = self.transcode_helpers.info[fname]
+            for k in info.keys():
+                ret[k] = [info[k]['status'],
+                          info[k]['status'] == 'ok' and info[k]['address'] + '/' + info[k]['path'] or \
+                          info[k]['status'] == 'pending' and \
+                          self.transcode_helpers.get_progress(k) or '0']
             return ret
         except Exception, e:
             return []
@@ -198,18 +202,18 @@ class VideoView(BrowserView):
 
     def get_video_language_info(self, video_language_id):
         """Fake the genres/categories process to return the video language infos"""
-        voc = self.vocab_tool.getVocabularyByName('video_languages')        
+        voc = self.vocab_tool.getVocabularyByName('video_languages')
         try:
             video_language = voc[video_language_id]
             language_title = video_language.Title
         except KeyError:
             language_title = video_language_id
-        
+
         if not TAXONOMIES:
             url = "%s/@@search?getCountries=" % self.portal_url
         else:
             url = "%s/%s/%s/" % (self.portal_url, TOPLEVEL_TAXONOMY_FOLDER, LANGUAGES_FOLDER)
-        
+
         return dict(id=video_language_id, url=url + video_language_id, title=language_title)
 
     # TODO 2013-07-19: make this configurable: show videos from same categories for instance
