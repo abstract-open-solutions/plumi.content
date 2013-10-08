@@ -38,17 +38,20 @@ class PlumiVideoBrain(Explicit):
         self.__parent__ = provider
         self.request = getattr(self.context, "REQUEST", None)
 
-    def render_listing(self):
+    def render_listing(self, caption_as_title=False):
         return self.template.__of__(self.request)(show_title=True,
-                                                  feature_video=False)
+                                                  feature_video=False,
+                                                  caption_as_title=caption_as_title)
 
-    def render(self):
+    def render(self, caption_as_title=False):
         return self.template.__of__(self.request)(show_title=False,
-                                                  feature_video=False)
+                                                  feature_video=False,
+                                                  caption_as_title=caption_as_title)
 
-    def render_feature_video(self):
+    def render_feature_video(self, caption_as_title=False):
         return self.template.__of__(self.request)(show_title=False,
-                                                  feature_video=True)
+                                                  feature_video=True,
+                                                  caption_as_title=caption_as_title)
 
     @property
     def categories(self):
@@ -90,8 +93,9 @@ class PlumiVideoBrain(Explicit):
             return '%s/%s' % (entry['address'], entry['path'])
         except:
             return False
-        
+
     def video_tag(self):
+        # XXX: THIS SIMPLY SUCKS! FIX ME!
         path = self.video.url[len(self.__parent__.context.absolute_url())+1:]+'/@@embed_view'
         self.request['width'] = 525
         html = self.__parent__.context.restrictedTraverse(path)(self.request)

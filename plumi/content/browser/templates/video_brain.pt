@@ -12,7 +12,7 @@
     </a>
   </tal:image>
   </span>
- <span tal:omit-tag="" tal:condition="options/feature_video" 
+ <span tal:omit-tag="" tal:condition="options/feature_video"
        tal:define="mp4 video/isTranscodedPlumiVideoObj/mp4-low|nothing;
                    webm video/isTranscodedPlumiVideoObj/webm-low|nothing;">
 
@@ -26,21 +26,27 @@
     </a>
 
     <a class="featuredItemTitle" href=""
-       tal:content="view/video_title"
        tal:attributes="href string:${view/url}/view;
-		       title video/Description" />
+		       title video/Description">
+      <span tal:condition="not:options/caption_as_title"
+            tal:replace="view/video_title"
+            />
+      <span tal:condition="options/caption_as_title"
+            tal:replace="thumbCaption"
+            />
+    </a>
   </h4>
   <div class="featured-extra-info">
     <div class="featured-video-duration"
           tal:define="duration video/videoDuration|nothing"
           tal:condition="duration">
-       <span class="discreet" tal:content="duration" /> 
-    </div>		       
+       <span class="discreet" tal:content="duration" />
+    </div>
 
     <span class="featuredItemDetailsPosted discreet" i18n:translate="">
       Posted:
       <span class="posted-date" tal:content="view/post_date" i18n:name="PostedDate"/>
-       by <a tal:attributes="href string:${context/portal_url}/author/${view/creator}" 
+       by <a tal:attributes="href string:${context/portal_url}/author/${view/creator}"
              tal:content="view/creator" />
       <span tal:condition="view/total_comments">with <span tal:replace="view/total_comments">1</span> comments</span>
     </span>
@@ -69,7 +75,7 @@
   	 >Read more&hellip;</a>
       </span>
    </p>
-    
+
     <dl class="plumi-categories plumi-props-listing"
         tal:define="categories video/categories"
         tal:condition="categories">
@@ -116,5 +122,5 @@
       </dd>
     </dl>
   </div>
- 
+
 </tal:video>
