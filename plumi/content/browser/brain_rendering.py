@@ -26,7 +26,7 @@ class PlumiVideoBrain(Explicit):
         self.video = context
         self.url = context.getURL()
         self.video_title = context.Title or context.id or 'Untitled'
-        self.video_caption = context.hasImageAndCaption.get('caption', self.video_title)
+        self.video_caption = context.hasImageAndCaption.get('caption') or self.video_title
         self.creator = context.Creator
         try:
             if context.total_comments == 0:
