@@ -32,7 +32,7 @@
             tal:replace="view/video_title"
             />
       <span tal:condition="options/caption_as_title"
-            tal:replace="thumbCaption"
+            tal:replace="view/video_caption"
             />
     </a>
   </h4>
