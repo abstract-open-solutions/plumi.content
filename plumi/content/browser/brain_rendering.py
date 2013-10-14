@@ -44,7 +44,7 @@ class PlumiVideoBrain(Explicit):
             'show_title': True,
             'feature_video': False,
             'caption_as_title': False,
-        )
+        }
         options.update(kwargs)
         return self.template.__of__(self.request)(**options)
 
@@ -53,7 +53,7 @@ class PlumiVideoBrain(Explicit):
             'show_title': False,
             'feature_video': False,
             'caption_as_title': False,
-        )
+        }
         options.update(kwargs)
         return self.template.__of__(self.request)(**options)
 
@@ -62,7 +62,7 @@ class PlumiVideoBrain(Explicit):
             'show_title': False,
             'feature_video': True,
             'caption_as_title': False,
-        )
+        }
         options.update(kwargs)
         return self.template.__of__(self.request)(**options)
 
