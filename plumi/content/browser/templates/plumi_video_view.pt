@@ -7,7 +7,7 @@
       i18n:domain="plumi">
 
     <!-- meta and link tags for facebook integration -->
-    <tal:block metal:fill-slot="head_slot" 
+    <tal:block metal:fill-slot="head_slot"
                define="portal context/@@plone_portal_state/portal;
                        transcoding view/transcoding;
                        mp4 transcoding/mp4-high|transcoding/mp4-low|nothing;
@@ -16,7 +16,7 @@
         <meta name="title" tal:attributes="content here/title" />
         <meta name="description" tal:attributes="content here/description" />
         <link rel="image_src" tal:condition="view/hasThumbnailImage" tal:attributes="href string:${here/absolute_url}/thumbnailImage_mini" />
-        <meta name="video_height" content="300" /> 
+        <meta name="video_height" content="300" />
         <meta name="video_width" content="525" />
         <meta property="og:type" content="article">
         <meta property="og:url" tal:attributes="content string:${here/absolute_url}">
@@ -53,7 +53,7 @@
         </tal:comment>
         <!-- <div tal:replace="structure provider:plone.abovecontent" /> -->
         <div tal:replace="structure provider:plone.abovecontenttitle" tal:condition="not:ajax_load" />
-        <h1 class="documentFirstHeading"> 
+        <h1 class="documentFirstHeading">
             <metal:field use-macro="python:here.widget('title', mode='view')">
                 Title
             </metal:field>
@@ -121,7 +121,7 @@
                         <td>
                             <ul>
                               <li tal:repeat="genre genres">
-                                <a href="" title="" id="" 
+                                <a href="" title="" id=""
                                    tal:condition="python: genre['id'] != 'aaa_none'"
                                    tal:attributes="href genre/url|nothing;
                                                    id genre/id;
@@ -163,7 +163,7 @@
                           </li>
                         </ul>
                       </td>
-                  </tr>    
+                  </tr>
                   <tr tal:define="country view/country"
                         tal:condition="country">
                       <th i18n:translate="">Country</th>
@@ -221,7 +221,7 @@
                     <td>
                       <a href=""
                          tal:define="url here/WebsiteURL"
-                         tal:attributes="href url" 
+                         tal:attributes="href url"
                          tal:content="here/WebsiteURL"></a>
                     </td>
                   </tr>
@@ -232,7 +232,7 @@
                       year produced.
                     </td>
                   </tr>
-            
+
                   <tr tal:condition="here/ProductionCompanyName">
                     <th i18n:translate="">Production Company</th>
                     <td tal:content="here/ProductionCompanyName">
@@ -245,10 +245,10 @@
                       Distributor
                     </td>
                   </tr>
-            
+
                 </tbody>
               </table>
-            </div> <!-- class=vcard -->           
+            </div> <!-- class=vcard -->
         </div> <!-- id=video-infos -->
 
         <div metal:use-macro="here/document_relateditems/macros/relatedItems">
@@ -256,9 +256,9 @@
         </div>
 
 
-		
+
 		<div id="full-description" tal:condition="here/FullDescription">
-			<h1 class="documentFirstHeading" i18n:translate="full_description"> 
+			<h1 class="documentFirstHeading" i18n:translate="full_description">
 				Full Description
 			</h1>
 			<div tal:content="structure here/FullDescription">
@@ -267,22 +267,22 @@
 		</div>
 
         <div id="video-licensing">
-          
+
             <div tal:replace="structure context/@@copyright_byline_view | nothing" />
             <div tal:replace="structure context/@@citation_view | nothing" />
         </div>
 
-        <div tal:condition="view/transcoding_rights">    
+        <div tal:condition="view/transcoding_rights">
             <script type="text/javascript">
                function showNotification(){
                    jq("#notificationDiv").show();
                    setTimeout(function(){jq("#notificationDiv").fadeOut(500);},15000)
                }
             </script>
-            <div id="video-transcoding" tal:define="transcoding view/transcoding">               
-                <h1 class="documentFirstHeading" i18n:translate="transcoding"> 
+            <div id="video-transcoding" tal:define="transcoding view/transcoding">
+                <h1 class="documentFirstHeading" i18n:translate="transcoding">
                 	Transcoding
-                </h1>                   
+                </h1>
                 <strong i18n:translate="transcode_status">Transcode Status</strong>
                 <ul>
                     <li tal:repeat="profile transcoding">
@@ -291,12 +291,12 @@
                         </a> - <span tal:content="python:transcoding[profile][0] == 'ok' and '100%' or '%s%%' % transcoding[profile][1]" tal:condition="python:transcoding[profile]" />
                     </li>
                 </ul>
-                
+
                 <p><span tal:omit-tag="" i18n:translate="restart_transcoding">
                     You may like to try to</span>
                     <a tal:attributes="href string:${here/absolute_url}/reTranscode"
                        onclick="showNotification()"
-                       >re-start transcoding.</a>              
+                       >re-start transcoding.</a>
                 </p>
                 <div id="notificationDiv" style="display:none">
                     <strong>reTranscoding...</strong> <p> Please refresh the page in 5-15 minutes (the larger your video the longer it will take) to see the retranscoded file.</p>
@@ -309,9 +309,23 @@
       We should make this listing configurable, like "show related videos" and alike.
       And we should use video_listing once improved.
     </tal:comment>
-    <div id="authors_latest" tal:define="other_videos  view/authors_latest|nothing">
-      <h1 class="documentFirstHeading" tal:condition="other_videos">Other videos by this member</h1>
 
+    <div id="authors_latest"
+         tal:condition="view/show_authors_latest"
+         tal:define="other_videos  view/authors_latest|nothing">
+      <h1 class="documentFirstHeading">Other videos by this member</h1>
+      <dl class="featured-block videos-listing">
+        <dd class="featuredItem"
+            tal:repeat="obj other_videos">
+          <tal:video replace="structure obj/render_listing" />
+        </dd>
+      </dl>
+    </div>
+
+    <div id="categories_latest"
+         tal:condition="view/show_categories_latest"
+         tal:define="other_videos  view/categories_latest|nothing">
+      <h1 class="documentFirstHeading">Other videos from same categories</h1>
       <dl class="featured-block videos-listing">
         <dd class="featuredItem"
             tal:repeat="obj other_videos">

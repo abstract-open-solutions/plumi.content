@@ -2,23 +2,31 @@
 import os.path
 from random import sample
 
+from Acquisition import aq_inner
+from Acquisition import aq_parent
+
 # Five & zope3 thingies
 from zope import i18n
 from zope.interface import implements
-from Products.Five.browser import BrowserView
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
 from zope.component import queryMultiAdapter
 
-# CMF
+from plone.registry.interfaces import IRegistry
+from plone.memoize import view
+
+from Products.Five.browser import BrowserView
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
+
+from Products.AdvancedQuery import Eq
+
+from collective.transcode.star.interfaces import ITranscodeTool
 
 from plumi.content.browser.interfaces import IVideoView
 from plumi.content.browser.interfaces import ITopicsProvider
 from plumi.content.browser.interfaces import IPlumiVideoBrain
-from collective.transcode.star.interfaces import ITranscodeTool
+from plumi.content.utils import get_settings
 
 # check if em.taxonomies is installed
 try:
@@ -45,6 +53,7 @@ class VideoView(BrowserView):
         super(VideoView, self).__init__(context, request)
         self.portal_url = getToolByName(self.context, "portal_url")()
         self.vocab_tool = getToolByName(self.context, "portal_vocabularies")
+        self.settings = get_settings()
 
     @property
     def transcode_helpers(self):
@@ -216,25 +225,57 @@ class VideoView(BrowserView):
 
         return dict(id=video_language_id, url=url + video_language_id, title=language_title)
 
-    # TODO 2013-07-19: make this configurable: show videos from same categories for instance
-    def authors_latest(self):
-        folder_path = '/'.join(self.context.aq_inner.aq_parent.getPhysicalPath())
+    def _get_videos(self, extra_query=None, sorting=None, exclude_self=True, render=True):
+        query = {
+            'portal_type': 'PlumiVideo',
+            'review_state': ('published', 'featured'),
+        }
+        if extra_query is None:
+            extra_query = {}
+        query.update(extra_query)
+
+        if sorting is None:
+            sorting = [('effective','desc'), ]
+
         catalog = getToolByName(self.context, "portal_catalog")
-        query = dict(portal_type='PlumiVideo',
-                     path={'query': folder_path, 'depth': 1},
-                     sort_on='effective',
-                     sort_order='reverse',
-                     review_state=['published', 'featured'])
-        brains = catalog(**query)
-        try:
-            brains = sample(brains, 15)
-        except ValueError:
-            # we got less than 15 brains... no worries
-            pass
-        # FIXME 2013-07-19: way too many loops here! and no cache at all!
-        videos = [queryMultiAdapter((brain, self), IPlumiVideoBrain) for brain in brains ]
-        videos = [video for video in videos if video.url != self.context.absolute_url()]
-        return videos
+        aq = catalog.makeAdvancedQuery(query)
+        if exclude_self:
+            # exclude content with current context UID
+            aq &=~Eq('UID', self.context.UID())
+
+        brains = catalog.evalAdvancedQuery(aq, sorting)
+        if render:
+            brains = [
+                queryMultiAdapter((brain, self), IPlumiVideoBrain)
+                for brain in brains
+            ]
+        return brains
+
+    @view.memoize
+    def authors_latest(self):
+        parent = aq_parent(aq_inner(self.context))
+        folder_path = '/'.join(parent.getPhysicalPath())
+        extra_query = {
+            'path': {'query': folder_path, 'depth': 1},
+        }
+        return self._get_videos(extra_query=extra_query)
+
+    def show_authors_latest(self):
+        if self.settings.video_related_display_author:
+            return bool(self.authors_latest())
+        return False
+
+    @view.memoize
+    def categories_latest(self):
+        extra_query = {
+            'getCategories': self.context.getCategories(),
+        }
+        return self._get_videos(extra_query=extra_query)
+
+    def show_categories_latest(self):
+        if self.settings.video_related_display_categories:
+            return bool(self.categories_latest())
+        return False
 
     @property
     def isVideo(self):
