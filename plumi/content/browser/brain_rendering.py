@@ -39,20 +39,32 @@ class PlumiVideoBrain(Explicit):
         self.__parent__ = provider
         self.request = getattr(self.context, "REQUEST", None)
 
-    def render_listing(self, caption_as_title=False):
-        return self.template.__of__(self.request)(show_title=True,
-                                                  feature_video=False,
-                                                  caption_as_title=caption_as_title)
+    def render_listing(self, **kwargs):
+        options = {
+            'show_title': True,
+            'feature_video': False,
+            'caption_as_title': False,
+        )
+        options.update(kwargs)
+        return self.template.__of__(self.request)(**options)
 
-    def render(self, caption_as_title=False):
-        return self.template.__of__(self.request)(show_title=False,
-                                                  feature_video=False,
-                                                  caption_as_title=caption_as_title)
+    def render(self, **kwargs):
+        options = {
+            'show_title': False,
+            'feature_video': False,
+            'caption_as_title': False,
+        )
+        options.update(kwargs)
+        return self.template.__of__(self.request)(**options)
 
-    def render_feature_video(self, caption_as_title=False):
-        return self.template.__of__(self.request)(show_title=False,
-                                                  feature_video=True,
-                                                  caption_as_title=caption_as_title)
+    def render_feature_video(self, **kwargs):
+        options = {
+            'show_title': False,
+            'feature_video': True,
+            'caption_as_title': False,
+        )
+        options.update(kwargs)
+        return self.template.__of__(self.request)(**options)
 
     @property
     def categories(self):
