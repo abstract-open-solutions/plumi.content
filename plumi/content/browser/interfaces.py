@@ -1,24 +1,43 @@
 # -*- coding: utf-8 -*-
 from zope import schema
-from plonetheme.classic.browser.interfaces import IThemeSpecific as IClassicTheme
 from zope.interface import Interface, Attribute
 from zope.publisher.interfaces.browser import IBrowserView
+
+from plonetheme.classic.browser.interfaces import IThemeSpecific as IClassicTheme
+
 from collective.contentlicensing.DublinCoreExtensions.interfaces import ILicensable
+
+from plumi.content import _
 
 
 class IThemeSpecific(IClassicTheme):
     """theme-specific layer"""
 
+
 class IPlumiSettings(Interface):
     """Transcoding settings"""
 
-    notifyReviewers = schema.Bool(title = u'Send Notifications',
-                             default = True,
-                            )
+    notifyReviewers = schema.Bool(
+        title = _(u'Send Notifications'),
+        default = True,
+    )
 
-    AfterVideoText = schema.Text(title= u"Text to show after video upload",
-                                  default = u"Thank you very much for your contribution! We will review the video and notify you once it is ready.",
-                                  )
+    AfterVideoText = schema.Text(
+        title= _(u"Text to show after video upload"),
+        default = _(u"Thank you very much for your contribution! "
+                    "We will review the video and notify you once it is ready."),
+    )
+
+    video_related_display_author = schema.Bool(
+        title = _(u'Show related video from same author'),
+        default = True,
+    )
+
+    video_related_display_categories = schema.Bool(
+        title = _(u'Show related video from same categories'),
+        default = False,
+    )
+
 
 class ICalloutView(Interface):
     u"""Callout view"""
