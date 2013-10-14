@@ -6,7 +6,7 @@ from zope.i18nmessageid import MessageFactory
 from plumi.content import config
 
 from Products.Archetypes import atapi
-from Products.CMFCore import utils
+from Products.CMFCore import utils as coreutils
 from Products.CMFCore.permissions import setDefaultRoles
 from zope.interface import implements
 from Products.validation.interfaces.IValidator import IValidator
@@ -18,12 +18,13 @@ import permissions
 # like _(u"message") will then be extracted by i18n tools for translation.
 
 plumiMessageFactory = MessageFactory('plumi')
+_ = plumiMessageFactory
 
 from Products.validation import validation
 from Products.validation.interfaces import ivalidator
 
 class YearValidator:
-    implements(IValidator) 
+    implements(IValidator)
 
     def __init__(self, name):
         self.name = name
@@ -69,7 +70,7 @@ def initialize(context):
     # in the GenericSetup profile.
 
     for atype, constructor in zip(content_types, constructors):
-        utils.ContentInit('%s: %s' % (config.PROJECTNAME, atype.portal_type),
+        coreutils.ContentInit('%s: %s' % (config.PROJECTNAME, atype.portal_type),
             content_types      = (atype,),
             permission         = config.ADD_PERMISSIONS[atype.portal_type],
             extra_constructors = (constructor,),
