@@ -2,6 +2,7 @@
 from Acquisition import Explicit
 from zope.interface import implements
 from zope.component import adapts
+from zope.component import getMultiAdapter
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plumi.content.browser.interfaces import IAbstractCatalogBrain
 from interfaces import IPlumiVideoBrain, ITopicsProvider
@@ -9,6 +10,16 @@ from zope.component import getUtility
 from Products.CMFCore.interfaces import IPropertiesTool
 from plumi.content.browser.video import VideoView
 from collective.transcode.star.interfaces import ITranscodeTool
+
+from Products.ATContentTypes.interfaces import IATTopic
+from plone.app.collection.interfaces import ICollection
+
+
+def is_collection(obj):
+    """ return true if given obj is a plone collection
+    """
+    return IATTopic.providedBy(obj) or ICollection.providedBy(obj)
+
 
 
 class PlumiVideoBrain(Explicit):
@@ -24,9 +35,11 @@ class PlumiVideoBrain(Explicit):
     def __init__(self, context, provider):
         self.context = context
         self.video = context
+        self.video_path = context.getPath()
         self.url = context.getURL()
         self.video_title = context.Title or context.id or 'Untitled'
-        self.video_caption = context.hasImageAndCaption.get('caption') or self.video_title
+        self.video_caption = context.hasImageAndCaption.get('caption') \
+            or self.video_title
         self.creator = context.Creator
         try:
             if context.total_comments == 0:
@@ -38,6 +51,9 @@ class PlumiVideoBrain(Explicit):
             self.total_comments = None
         self.__parent__ = provider
         self.request = getattr(self.context, "REQUEST", None)
+        ps = getMultiAdapter((self.context, self.request),
+                             name="plone_portal_state")
+        self.portal = ps.portal()
 
     def render_listing(self, **kwargs):
         options = {
@@ -109,8 +125,15 @@ class PlumiVideoBrain(Explicit):
 
     def video_tag(self):
         # XXX: THIS SIMPLY SUCKS! FIX ME!
-        path = self.video.url[len(self.__parent__.context.absolute_url())+1:]+'/@@embed_view'
+        context = self.__parent__.context
+        if is_collection(context):
+            path = self.video_path + '/@@embed_view'
+            view = self.portal.restrictedTraverse(path)
+        else:
+            path = self.video.url[len(self.__parent__.context.absolute_url())+1:]+'/@@embed_view'
+            view = self.__parent__.context.restrictedTraverse(path)
         self.request['width'] = 525
-        html = self.__parent__.context.restrictedTraverse(path)(self.request)
+        html = view(self.request)
+
         video = '<video' + html.split('<video')[1].split('<div id="portlets-footer"')[0].split('<div id="portal-footer">')[0]
         return video
