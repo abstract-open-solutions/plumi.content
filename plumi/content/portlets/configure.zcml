@@ -2,10 +2,17 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:plone="http://namespaces.plone.org/plone" >
 
-  <!-- Ensure Plone's portlets ZCML has already been processed;
-       without this, we may get a permission lookup error -->
-  <include package="plone.app.portlets" />
+    <include package="plone.app.portlets" />
 
-	<!-- -*- extra stuff goes here -*- -->
+    <!-- TODO: move portlets from ../browser/portlets here -->
+
+    <plone:portlet
+        name="plumi.content.videoFromSameCategories"
+        interface=".video_from_same_categories.IVideoFromSameCategories"
+        assignment=".video_from_same_categories.Assignment"
+        renderer=".video_from_same_categories.Renderer"
+        addview=".video_from_same_categories.AddForm"
+        editview=".video_from_same_categories.EditForm"
+        />
 
 </configure>

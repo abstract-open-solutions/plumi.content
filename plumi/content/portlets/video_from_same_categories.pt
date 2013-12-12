@@ -1,0 +1,43 @@
+<dl class="portlet portletVideoFromSameCategories"
+    i18n:domain="plumi.content"
+    tal:condition="view/available">
+
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span tal:content="view/portletTitle">Portlet Title</span>
+        <span class="portletTopRight"></span>
+    </dt>
+
+    <dd class="portletItem odd lastItem">
+
+        <table class="listing video-listing"
+             tal:define="other_videos view/related|nothing;
+                         plone_view   context/@@plone">
+
+            <tal:listing
+                condition="other_videos"
+                repeat="item other_videos">
+                <tr>
+                    <td class="img">
+                        <a tal:attributes="href item/getURL;
+                                           title item/Title">
+                            <img tal:attributes="src string:${item/getURL}/@@images/thumbnailImage/tile" />
+                        </a>
+                    </td>
+                    <td class="info">
+                        <a tal:attributes="href item/getURL;
+                                           title item/Title">
+                            <span class="title"
+                                  tal:content="python: plone_view.cropText(item.Title,length=27)" />
+                        </a>
+                    </td>
+                </tr>
+            </tal:listing>
+
+        </table>
+
+        <span class="portletBottomLeft"></span>
+        <span class="portletBottomRight"></span>
+    </dd>
+
+</dl>
