@@ -5,7 +5,7 @@ from zope.interface import implements, directlyProvides
 import datetime
 
 try:
-    from Products.LinguaPlone import atapi 
+    from Products.LinguaPlone import atapi
 except ImportError:
     # No multilingual support
     from Products.Archetypes import atapi
@@ -35,7 +35,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
 
         ),
         languageIndependent=True,
-        schemata='default',        
+        schemata='default',
     ),
 
     atapi.StringField(
@@ -45,9 +45,9 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
             label=_(u"Director"),
         ),
         languageIndependent=True,
-        schemata='default',        
+        schemata='default',
     ),
-    
+
     atapi.StringField(
         'ProducerEmail',
         storage=atapi.AnnotationStorage(),
@@ -56,7 +56,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         ),
         validators=('isEmail'),
         languageIndependent=True,
-        schemata='default',        
+        schemata='default',
     ),
 
     atapi.StringField(
@@ -66,25 +66,25 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
             label=_(u"Producer Mailing Address"),
         ),
         languageIndependent=True,
-        schemata='default',        
+        schemata='default',
     ),
-        
+
     atapi.StringField(
         'ProjectName',
         storage=atapi.AnnotationStorage(),
         widget=atapi.StringWidget(
             label=_(u"Project Name"),
         ),
-        schemata='default',                
+        schemata='default',
     ),
-    
+
     atapi.StringField(
         'ProductionCompanyName',
         storage=atapi.AnnotationStorage(),
         widget=atapi.StringWidget(
             label=_(u"Production Company Name"),
         ),
-        schemata='default',                
+        schemata='default',
     ),
 
 
@@ -107,7 +107,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         ),
         schemata='default',
     ),
-    
+
     atapi.StringField(
         'DateProduced',
         storage=atapi.AnnotationStorage(),
@@ -117,10 +117,10 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         languageIndependent=True,
 		required=True,
         validators=('isValidYear'),
-        schemata='default',                
+        schemata='default',
     ),
 
-            
+
     atapi.TextField(
         'FullDescription',
         storage=atapi.AnnotationStorage(),
@@ -139,7 +139,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         ),
         vocabulary=NamedVocabulary("""video_countries"""),
         languageIndependent=True,
-        schemata='categorization',        
+        schemata='categorization',
     ),
 
     atapi.StringField(
@@ -153,7 +153,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         languageIndependent=True,
         default=u"en",
 		required=False,
-        schemata='categorization',                
+        schemata='categorization',
     ),
 
     atapi.StringField(
@@ -165,7 +165,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         ),
         vocabulary=NamedVocabulary("""video_genre"""),
         languageIndependent=True,
-        schemata='categorization',                
+        schemata='categorization',
     ),
 
     atapi.LinesField(
@@ -178,13 +178,13 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         ),
         vocabulary=NamedVocabulary("""video_categories"""),
         languageIndependent=True,
-        schemata='categorization',                
+        schemata='categorization',
 
     ),
 
     BlobField(
         'video_file',
-        storage=atapi.AnnotationStorage(), 
+        storage=atapi.AnnotationStorage(),
         primary=True,
         required=True,
         accessor='getIterator',
@@ -198,7 +198,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
         languageIndependent=True,
 
     ),
-    
+
     atapi.ImageField(
         'thumbnailImage',
         storage=atapi.AnnotationStorage(),
@@ -206,17 +206,29 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
             label=_(u"Video Thumbnail"),
         ),
         max_size = zconf.ATImage.max_image_dimension,
-        validators=(('isNonEmptyFile'),('checkImageMaxSize')),
+        validators=(('isNonEmptyFile'),
+                    ('checkImageMaxSize')),
         schemata='default',
         languageIndependent=True,
-        allowable_content_types=('image/gif','image/jpeg','image/png'),
-        sizes= {'preview' : (711, 400),
-                'mini' :  (355, 200),
-                'thumb':  (215, 123),
-            },
-        crop_scales = ['preview', 'mini', 'thumb'],
+        allowable_content_types=('image/gif',
+                                 'image/jpeg',
+                                 'image/png'),
+        sizes= {
+            'large': (768, 768),
+            'preview': (711, 400),
+            'mini':  (355, 200),
+            'thumb':  (230, 130),
+            'tile':  (64, 64),
+            'icon':  (32, 32),
+            'listing':  (16, 16),
+        },
+        crop_scales = [
+            'preview',
+            'mini',
+            'thumb'
+        ],
     ),
-    
+
     atapi.StringField(
         'thumbnailImageDescription',
         storage=atapi.AnnotationStorage(),
@@ -224,7 +236,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
             label=_(u"Thumbnail Image description"),
         ),
         schemata='default',
-    ),    
+    ),
 
 
 ))
@@ -246,13 +258,13 @@ PlumiVideoSchema.registerLayer('marshall', BlobMarshaller())
 class PlumiVideo(base.ATCTContent):
     """Plumi Video content"""
     implements(IPlumiVideo, IMultiPageSchema)
-    
+
     meta_type = "PlumiVideo"
     schema = PlumiVideoSchema
 
     title = atapi.ATFieldProperty('title')
     description = atapi.ATFieldProperty('description')
-    
+
     # -*- Your ATSchema to Python Property Bridges Here ... -*-
     thumbnailImageDescription = atapi.ATFieldProperty('thumbnailImageDescription')
     DateProduced = atapi.ATFieldProperty('DateProduced')
@@ -282,9 +294,9 @@ class PlumiVideo(base.ATCTContent):
                 tdelta = videoMetaData.get('duration')
                 seconds = tdelta.seconds
                 hours, remainder = divmod(seconds, 3600)
-                minutes, seconds = divmod(remainder, 60)            
+                minutes, seconds = divmod(remainder, 60)
                 if hours > 0:
-                    strDuration += "%.2d:" % hours                
+                    strDuration += "%.2d:" % hours
                 strDuration += "%.2d:%.2d" % (minutes,seconds)
         except:
             pass
@@ -297,6 +309,6 @@ class PlumiVideo(base.ATCTContent):
             value =  self.Title() or self.getId()
         return value
 
-          
+
 
 atapi.registerType(PlumiVideo, PROJECTNAME)
