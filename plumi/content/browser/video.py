@@ -153,6 +153,7 @@ class VideoView(BrowserView):
 
     @property
     def transcoding(self):
+        # XXX: refactor this!
         ret = {}
         try:
             fname = self.transcode_helpers.fieldname
@@ -164,7 +165,7 @@ class VideoView(BrowserView):
                           self.transcode_helpers.get_progress(k) or '0']
             return ret
         except Exception, e:
-            return []
+            return {}
 
     def get_categories_dict(self, cats):
         """Uses the portal vocabularies to retrieve the video categories"""
@@ -210,7 +211,8 @@ class VideoView(BrowserView):
         return dict(id=country_id, url=url + country_id, title=country.Title())
 
     def get_video_language_info(self, video_language_id):
-        """Fake the genres/categories process to return the video language infos"""
+        """Fake the genres/categories process
+        to return the video language infos"""
         voc = self.vocab_tool.getVocabularyByName('video_languages')
         try:
             video_language = voc[video_language_id]
@@ -221,11 +223,16 @@ class VideoView(BrowserView):
         if not TAXONOMIES:
             url = "%s/@@search?getCountries=" % self.portal_url
         else:
-            url = "%s/%s/%s/" % (self.portal_url, TOPLEVEL_TAXONOMY_FOLDER, LANGUAGES_FOLDER)
+            url = "%s/%s/%s/" % (self.portal_url,
+                                 TOPLEVEL_TAXONOMY_FOLDER,
+                                 LANGUAGES_FOLDER)
 
-        return dict(id=video_language_id, url=url + video_language_id, title=language_title)
+        return dict(id=video_language_id,
+                    url=url + video_language_id,
+                    title=language_title)
 
-    def _get_videos(self, extra_query=None, sorting=None, exclude_self=True, render=True):
+    def _get_videos(self, extra_query=None,
+                    sorting=None, exclude_self=True, render=True):
         query = {
             'portal_type': 'PlumiVideo',
             'review_state': ('published', 'featured'),
@@ -252,13 +259,13 @@ class VideoView(BrowserView):
         return brains
 
     @view.memoize
-    def authors_latest(self):
+    def authors_latest(self, **kw):
         parent = aq_parent(aq_inner(self.context))
         folder_path = '/'.join(parent.getPhysicalPath())
         extra_query = {
             'path': {'query': folder_path, 'depth': 1},
         }
-        return self._get_videos(extra_query=extra_query)
+        return self._get_videos(extra_query=extra_query, **kw)
 
     def show_authors_latest(self):
         if self.settings.video_related_display_author:
@@ -266,11 +273,11 @@ class VideoView(BrowserView):
         return False
 
     @view.memoize
-    def categories_latest(self):
+    def categories_latest(self, **kw):
         extra_query = {
             'getCategories': self.context.getCategories(),
         }
-        return self._get_videos(extra_query=extra_query)
+        return self._get_videos(extra_query=extra_query, **kw)
 
     def show_categories_latest(self):
         if self.settings.video_related_display_categories:
