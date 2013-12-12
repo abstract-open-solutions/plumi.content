@@ -313,7 +313,7 @@
     <div id="authors_latest"
          tal:condition="view/show_authors_latest"
          tal:define="other_videos  view/authors_latest|nothing">
-      <h1 class="documentFirstHeading">Other videos by this member</h1>
+      <h1 class="documentFirstHeading" i18n:translate="">Other videos by this member</h1>
       <dl class="featured-block videos-listing">
         <dd class="featuredItem"
             tal:repeat="obj other_videos">
@@ -325,7 +325,7 @@
     <div id="categories_latest"
          tal:condition="view/show_categories_latest"
          tal:define="other_videos  view/categories_latest|nothing">
-      <h1 class="documentFirstHeading">Other videos from same categories</h1>
+      <h1 class="documentFirstHeading" i18n:translate="">Other videos from same categories</h1>
       <dl class="featured-block videos-listing">
         <dd class="featuredItem"
             tal:repeat="obj other_videos">
