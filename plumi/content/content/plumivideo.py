@@ -247,7 +247,8 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
 PlumiVideoSchema['title'].storage = atapi.AnnotationStorage()
 PlumiVideoSchema['description'].storage = atapi.AnnotationStorage()
 PlumiVideoSchema['description'].required = True
-PlumiVideoSchema['subject'].widget = atapi.LinesWidget(label=_(u"Tags"), description=_(u"One per line"))
+PlumiVideoSchema['subject'].widget.label =_(u"Tags")
+PlumiVideoSchema['subject'].widget.description =_(u"One per line")
 
 PlumiVideoSchema.moveField('relatedItems', pos='bottom')
 PlumiVideoSchema.moveField('location', before='language')
