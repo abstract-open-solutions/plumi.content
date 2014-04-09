@@ -13,22 +13,13 @@ from plumi.content import _
 from plumi.content.interfaces import IPlumiVideo
 
 
-class IVideoFromSameCategories(IPortletDataProvider):
+class ICurrentVideoCategories(IPortletDataProvider):
 
     portletTitle = schema.TextLine(
         title=_(u"Portlet title"),
         description=_(u"The title of the portlet."),
         required=True,
-        default=_(u"Video from same categories")
-    )
-
-    count = schema.Int(
-        title=_(u"Maximum number of shown items."),
-        description=_(u"If greater than zero this number will limit the "
-                      "items shown."),
-        required=True,
-        min=0,
-        default=10
+        default=_(u"Video categories")
     )
 
 
@@ -37,9 +28,9 @@ class Assignment(base.Assignment):
     """
     """
 
-    implements(IVideoFromSameCategories)
+    implements(ICurrentVideoCategories)
 
-    portletTitle = 'Video from same categories'
+    portletTitle = 'Video categories'
     count = 10
 
     def __init__(self, **kw):
@@ -56,10 +47,7 @@ class Assignment(base.Assignment):
 
 class Renderer(base.Renderer):
 
-    """
-    """
-
-    render = ViewPageTemplateFile('video_from_same_categories.pt')
+    render = ViewPageTemplateFile('current_video_categories.pt')
 
     def __init__(self, context, request, view, manager, data):
         super(Renderer, self).__init__(context, request, view, manager, data)
@@ -68,13 +56,8 @@ class Renderer(base.Renderer):
         self.count = data.count
         self.ps = context.restrictedTraverse('@@plone_portal_state')
 
-    def has_related(self):
-        return bool(self.related())
-
-    def related(self):
-        view = getMultiAdapter((self.context, self.request),
-                               name="video_view")
-        return view.categories_latest(render=False)[:self.count or 10]
+    def has_categories(self):
+        return bool(self.categories())
 
     def is_manager(self):
         if not self.ps.anonymous():
@@ -82,18 +65,22 @@ class Renderer(base.Renderer):
             return member.checkPermission('Manage portlets', self.context)
         return False
 
+    def categories(self):
+        categories = []
+        view = self.context.restrictedTraverse('video_view', None)
+        if view:
+            categories = view.categories
+        return categories
+
     @property
     def available(self):
         return IPlumiVideo.providedBy(self.context) and \
-            (self.has_related() or self.is_manager())
+            (self.has_categories() or self.is_manager())
 
 
 class AddForm(base.AddForm):
 
-    """
-    """
-
-    form_fields = form.Fields(IVideoFromSameCategories)
+    form_fields = form.Fields(ICurrentVideoCategories)
 
     def create(self, data):
         """
@@ -103,6 +90,4 @@ class AddForm(base.AddForm):
 
 class EditForm(base.EditForm):
 
-    """
-    """
-    form_fields = form.Fields(IVideoFromSameCategories)
+    form_fields = form.Fields(ICurrentVideoCategories)

@@ -15,4 +15,13 @@
         editview=".video_from_same_categories.EditForm"
         />
 
+    <plone:portlet
+        name="plumi.content.currentVideoCategories"
+        interface=".current_video_categories.ICurrentVideoCategories"
+        assignment=".current_video_categories.Assignment"
+        renderer=".current_video_categories.Renderer"
+        addview=".current_video_categories.AddForm"
+        editview=".current_video_categories.EditForm"
+        />
+
 </configure>

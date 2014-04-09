@@ -1,0 +1,34 @@
+<dl class="portlet portletCurrentVideoCategories"
+    i18n:domain="plumi.content"
+    tal:condition="view/available">
+
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span tal:content="view/portletTitle">Portlet Title</span>
+        <span class="portletTopRight"></span>
+    </dt>
+
+    <dd class="portletItem odd lastItem">
+
+        <ul class="listing video-categories"
+             tal:define="categories view/categories|nothing;
+                         plone_view   context/@@plone">
+
+            <tal:listing
+                condition="categories"
+                repeat="item categories">
+                <li>
+                    <a tal:attributes="href item/url;
+                                       title item/title"
+                                       tal:content="item/title">
+                    </a>
+                </li>
+            </tal:listing>
+
+        </ul>
+
+        <span class="portletBottomLeft"></span>
+        <span class="portletBottomRight"></span>
+    </dd>
+
+</dl>

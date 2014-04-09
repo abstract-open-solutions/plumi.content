@@ -35,4 +35,11 @@
         i18n:attributes="title; description"
         />
 
+    <portlet
+        addview="plumi.content.currentVideoCategories"
+        title="Curent video categories"
+        description="A configurable plone portlet that displays categories for current video"
+        i18n:attributes="title; description"
+        />
+
 </portlets>
