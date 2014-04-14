@@ -128,6 +128,7 @@ PlumiVideoSchema = schemata.ATContentTypeSchema.copy() + atapi.Schema((
             label=_(u"Full Description"),
         ),
         schemata='default',
+        searchable=1,
     ),
 
     atapi.StringField(
