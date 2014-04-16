@@ -1,10 +1,11 @@
 <dl class="portlet portletVideoFromSameCategories"
-    i18n:domain="plumi.content"
+    i18n:domain="plumi"
     tal:condition="view/available">
 
-    <dt class="portletHeader">
+   <dt class="portletHeader">
         <span class="portletTopLeft"></span>
-        <span tal:content="view/portletTitle">Portlet Title</span>
+        <span tal:content="view/display_title"
+              i18n:translate="">Video from same categories</span>
         <span class="portletTopRight"></span>
     </dt>
 

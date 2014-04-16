@@ -13,13 +13,16 @@ from plumi.content import _
 from plumi.content.interfaces import IPlumiVideo
 
 
+DEFAULT_TITLE = _(u"Video from same categories")
+
+
 class IVideoFromSameCategories(IPortletDataProvider):
 
     portletTitle = schema.TextLine(
         title=_(u"Portlet title"),
-        description=_(u"The title of the portlet."),
-        required=True,
-        default=_(u"Video from same categories")
+        description=_(u"If none provided defaults to 'Video from same categories'"),
+        required=False,
+        default=u''
     )
 
     count = schema.Int(
@@ -39,7 +42,8 @@ class Assignment(base.Assignment):
 
     implements(IVideoFromSameCategories)
 
-    portletTitle = 'Video from same categories'
+    title = DEFAULT_TITLE
+    portletTitle = ''
     count = 10
 
     def __init__(self, **kw):
@@ -47,18 +51,13 @@ class Assignment(base.Assignment):
             if hasattr(self, k):
                 setattr(self, k, v)
 
-    @property
-    def title(self):
-        """
-        """
-        return self.portletTitle
-
 
 class Renderer(base.Renderer):
 
     """
     """
 
+    title = DEFAULT_TITLE
     render = ViewPageTemplateFile('video_from_same_categories.pt')
 
     def __init__(self, context, request, view, manager, data):
@@ -67,6 +66,14 @@ class Renderer(base.Renderer):
         self.portletTitle = data.portletTitle
         self.count = data.count
         self.ps = context.restrictedTraverse('@@plone_portal_state')
+
+    @property
+    def display_title(self):
+        """ title displayed in portlet
+        """
+        if self.portletTitle:
+            return self.portletTitle
+        return self.title
 
     def has_related(self):
         return bool(self.related())

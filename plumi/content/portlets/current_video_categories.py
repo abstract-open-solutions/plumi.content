@@ -1,7 +1,6 @@
 from zope.interface import implements
 from zope import schema
 from zope.formlib import form
-from zope.component import getMultiAdapter
 
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.app.portlets.portlets import base
@@ -13,13 +12,16 @@ from plumi.content import _
 from plumi.content.interfaces import IPlumiVideo
 
 
+DEFAULT_TITLE = _(u"Video categories")
+
+
 class ICurrentVideoCategories(IPortletDataProvider):
 
     portletTitle = schema.TextLine(
         title=_(u"Portlet title"),
-        description=_(u"The title of the portlet."),
-        required=True,
-        default=_(u"Video categories")
+        description=_(u"If none provided defaults to 'Video categories'"),
+        required=False,
+        default=u''
     )
 
 
@@ -30,31 +32,33 @@ class Assignment(base.Assignment):
 
     implements(ICurrentVideoCategories)
 
-    portletTitle = 'Video categories'
-    count = 10
+    title = DEFAULT_TITLE
+    portletTitle = ''
 
     def __init__(self, **kw):
         for k, v in kw.iteritems():
             if hasattr(self, k):
                 setattr(self, k, v)
 
-    @property
-    def title(self):
-        """
-        """
-        return self.portletTitle
-
 
 class Renderer(base.Renderer):
 
+    title = DEFAULT_TITLE
     render = ViewPageTemplateFile('current_video_categories.pt')
 
     def __init__(self, context, request, view, manager, data):
         super(Renderer, self).__init__(context, request, view, manager, data)
         self.catalog = getToolByName(context, 'portal_catalog')
         self.portletTitle = data.portletTitle
-        self.count = data.count
         self.ps = context.restrictedTraverse('@@plone_portal_state')
+
+    @property
+    def display_title(self):
+        """ title displayed in portlet
+        """
+        if self.portletTitle:
+            return self.portletTitle
+        return self.title
 
     def has_categories(self):
         return bool(self.categories())
