@@ -124,16 +124,16 @@ class PlumiVideoBrain(Explicit):
             return False
 
     def video_tag(self):
-        # XXX: THIS SIMPLY SUCKS! FIX ME!
         context = self.__parent__.context
         if is_collection(context):
-            path = self.video_path + '/@@embed_view'
+            path = self.video_path + '/@@render-player'
             view = self.portal.restrictedTraverse(path)
         else:
-            path = self.video.url[len(self.__parent__.context.absolute_url())+1:]+'/@@embed_view'
+            video_path = self.video.url[
+                len(self.__parent__.context.absolute_url()) + 1:]
+            path = video_path + '/@@render-player'
             view = self.__parent__.context.restrictedTraverse(path)
+        # XXX 2014-07-03: why are we hardcoding the size here?
         self.request['width'] = 525
         html = view(self.request)
-
-        video = '<video' + html.split('<video')[1].split('<div id="portlets-footer"')[0].split('<div id="portal-footer">')[0]
-        return video
+        return html
