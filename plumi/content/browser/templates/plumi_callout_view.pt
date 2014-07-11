@@ -8,7 +8,6 @@
 
 <!-- meta and link tags for facebook integration -->
 <tal:block metal:fill-slot="head_slot" >
-    <meta name="title" tal:attributes="content here/title" />
     <meta name="description" tal:attributes="content here/description" />
     <link rel="image_src" tal:condition="view/hasThumbnailImage" tal:attributes="href string:${here/absolute_url}/calloutImage_mini" />
 </tal:block>
@@ -28,7 +27,7 @@
         <div tal:replace="structure provider:plone.abovecontent" />
         <div tal:replace="structure provider:plone.abovecontenttitle" tal:condition="not:ajax_load" />
 
-        <h1 class="documentFirstHeading"> 
+        <h1 class="documentFirstHeading">
           <metal:field use-macro="python:here.widget('title', mode='view')">
             Title
           </metal:field>
@@ -56,7 +55,7 @@
                 <a href=""
                    tal:define="url here/websiteURL"
                    tal:attributes="href url"
-                   tal:content="url" 
+                   tal:content="url"
                    i18n:translate="">more info</a>
             </p>
 
@@ -113,7 +112,7 @@
         <div metal:use-macro="here/document_relateditems/macros/relatedItems">
             show related items if they exist
         </div>
-     
+
 	</div>
 
     </tal:main-macro>

@@ -56,7 +56,6 @@
       <tal:desc tal:content="video/Description" />
       <span class="featured-read-more">
         <a href=""
-  	 id="featured-video-more"
   	 tal:attributes="href string:${view/url}/view;
   			 title view/video_title"
        i18n:translate=""
@@ -68,7 +67,6 @@
       <tal:desc tal:content="video/Description" />
       <span class="featured-read-more">
         <a href=""
-  	 id="featured-video-more"
   	 tal:attributes="href string:${view/url}/view;
   			 title view/video_title"
        i18n:translate=""
@@ -85,7 +83,6 @@
   	<li tal:repeat="cat categories">
   	  <a href="" title="" id=""
   	     tal:attributes="href cat/url;
-  			     id cat/id;
   			     title cat/title;
   			     class string:category-${cat/id};"
   	     tal:content="cat/title" />

@@ -12,12 +12,8 @@
                        transcoding view/transcoding;
                        mp4 transcoding/mp4-high|transcoding/mp4-low|nothing;
                        webm transcoding/webm-high|transcoding/webm-low|nothing">
-        <meta name="medium" content="video" />
-        <meta name="title" tal:attributes="content here/title" />
         <meta name="description" tal:attributes="content here/description" />
         <link rel="image_src" tal:condition="view/hasThumbnailImage" tal:attributes="href string:${here/absolute_url}/thumbnailImage_mini" />
-        <meta name="video_height" content="300" />
-        <meta name="video_width" content="525" />
         <meta property="og:type" content="article">
         <meta property="og:url" tal:attributes="content string:${here/absolute_url}">
         <meta property="og:title" content="title" tal:attributes="content here/title" />
@@ -108,7 +104,7 @@
 
         <div id="video-infos">
             <div class="vcard">
-              <table summary="Event details" class="vertical listing">
+              <table class="vertical listing">
                 <tbody>
                     <tr tal:define="duration context/plumiVideoDuration"
                         tal:condition="duration">
