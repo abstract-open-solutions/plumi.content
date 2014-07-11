@@ -63,7 +63,7 @@
       </span>
    </p>
 
-    <p id="featuredVideoDescription" class="feature discreet plumi-nice-description rounded" tal:condition="options/feature_video">
+    <p class="featuredVideoDescription feature discreet plumi-nice-description rounded" tal:condition="options/feature_video">
       <tal:desc tal:content="video/Description" />
       <span class="featured-read-more">
         <a href=""
@@ -81,8 +81,7 @@
       <dd>
         <ul>
   	<li tal:repeat="cat categories">
-  	  <a href="" title="" id=""
-  	     tal:attributes="href cat/url;
+  	  <a tal:attributes="href cat/url;
   			     title cat/title;
   			     class string:category-${cat/id};"
   	     tal:content="cat/title" />
@@ -96,9 +95,7 @@
         tal:condition="country">
       <dt i18n:translate="">Country</dt>
       <dd><ul><li>
-  	  <a href="" title="" id=""
-  	     tal:attributes="href country/url|nothing ;
-  			     id country/id|nothing ;
+  	  <a tal:attributes="href country/url|nothing ;
   			     title country/title|nothing ;
   			     " tal:content="country/title" tal:omit-tag="not: country/url|nothing"/>
   	     </li></ul>
@@ -110,11 +107,10 @@
         tal:condition="video_language">
       <dt i18n:translate="">Video Language</dt>
       <dd><ul><li>
-  	  <a href="" title="" id=""
-  	     tal:attributes="href video_language/url|nothing ;
-  			     id video_language/id|nothing ;
-  			     title video_language/title|nothing ;
-  			     " tal:content="video_language/title" tal:omit-tag="not: video_language/url|nothing"/>
+  	  <a tal:attributes="href video_language/url|nothing ;
+  			     title video_language/title|nothing ;"
+         tal:content="video_language/title"
+         tal:omit-tag="not: video_language/url|nothing"/>
   	     </li></ul>
       </dd>
     </dl>
