@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from urllib import quote
 from Acquisition import Explicit
 from zope.interface import implements
 from zope.component import adapts
@@ -41,6 +42,7 @@ class PlumiVideoBrain(Explicit):
         self.video_caption = context.hasImageAndCaption.get('caption') \
             or self.video_title
         self.creator = context.Creator
+        self.creator_url = quote(self.creator)
         try:
             if context.total_comments == 0:
                 self.total_comments = "0"
