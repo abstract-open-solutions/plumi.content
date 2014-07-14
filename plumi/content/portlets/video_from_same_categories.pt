@@ -22,7 +22,8 @@
                     <td class="img">
                         <a tal:attributes="href item/getURL;
                                            title item/Title">
-                            <img tal:attributes="src string:${item/getURL}/@@images/thumbnailImage/tile" />
+                            <img tal:attributes="src string:${item/getURL}/@@images/thumbnailImage/tile;
+                                alt item/Title" />
                         </a>
                     </td>
                     <td class="info">
