@@ -271,31 +271,48 @@
         <div tal:condition="view/transcoding_rights">
             <script type="text/javascript">
                function showNotification(){
-                   jq("#notificationDiv").show();
-                   setTimeout(function(){jq("#notificationDiv").fadeOut(500);},15000)
+                   $("#notificationDiv").show();
+                   setTimeout(function(){$("#notificationDiv").fadeOut(500);},15000)
                }
             </script>
-            <div id="video-transcoding" tal:define="transcoding view/transcoding">
-                <h1 class="documentFirstHeading" i18n:translate="transcoding">
-                	Transcoding
+            <div id="video-transcoding"
+                 tal:define="transcoding view/transcoding;
+                             is_transcoded view/is_transcoded">
+                <h1 class="documentFirstHeading"
+                    i18n:translate=""
+                    tal:condition="not:is_transcoded">
+                    Transcoding
                 </h1>
-                <strong i18n:translate="transcode_status">Transcode Status</strong>
-                <ul>
-                    <li tal:repeat="profile transcoding">
-                        <a tal:omit-tag="python:transcoding[profile][0] != 'ok'" tal:attributes="href python:transcoding[profile][1]">
-                            <strong tal:content="profile" />
-                        </a> - <span tal:content="python:transcoding[profile][0] == 'ok' and '100%' or '%s%%' % transcoding[profile][1]" tal:condition="python:transcoding[profile]" />
-                    </li>
-                </ul>
+                <h1 class="documentFirstHeading"
+                    i18n:translate=""
+                    tal:condition="is_transcoded">
+                    Transcoded
+                </h1>
+                <div class="transcode-status">
+                  <strong i18n:translate="transcode_status">Transcode Status</strong>
+                  <ul>
+                      <li tal:repeat="profile transcoding">
+                          <a tal:omit-tag="python:transcoding[profile][0] != 'ok'"
+                             tal:attributes="href python:transcoding[profile][1]">
+                              <strong tal:content="profile" />
+                          </a>
+                          -
+                          <span tal:content="python:transcoding[profile][0] == 'ok' and '100%' or '%s%%' % transcoding[profile][1]"
+                                tal:condition="python:transcoding[profile]" />
+                      </li>
+                  </ul>
+                </div>
 
                 <p><span tal:omit-tag="" i18n:translate="restart_transcoding">
                     You may like to try to</span>
-                    <a tal:attributes="href string:${here/absolute_url}/reTranscode"
+                    <a tal:attributes="href string:${context/absolute_url}/reTranscode"
                        onclick="showNotification()"
                        >re-start transcoding.</a>
                 </p>
-                <div id="notificationDiv" style="display:none">
-                    <strong>reTranscoding...</strong> <p> Please refresh the page in 5-15 minutes (the larger your video the longer it will take) to see the retranscoded file.</p>
+                <div id="notificationDiv"
+                     style="display:none">
+                    <strong>reTranscoding...</strong>
+                    <p i18n:translate="">Please refresh the page in 5-15 minutes (the larger your video the longer it will take) to see the retranscoded file.</p>
                 </div>
             </div> <!-- id=video-transcoding -->
         </div> <!-- transcoding rights tal -->

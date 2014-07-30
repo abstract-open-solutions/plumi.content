@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os.path
-from random import sample
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -16,25 +15,25 @@ from plone.registry.interfaces import IRegistry
 from plone.memoize import view
 
 from Products.Five.browser import BrowserView
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 
 from Products.AdvancedQuery import Eq
-
-from collective.transcode.star.interfaces import ITranscodeTool
 
 from plumi.content.browser.interfaces import IVideoView
 from plumi.content.browser.interfaces import ITopicsProvider
 from plumi.content.browser.interfaces import IPlumiVideoBrain
 from plumi.content.utils import get_settings
+from plumi.content.permissions import ReTranscodePermission
 
 # check if em.taxonomies is installed
 try:
-    from em.taxonomies.config import TOPLEVEL_TAXONOMY_FOLDER,\
-                                        COUNTRIES_FOLDER,\
-                                        GENRE_FOLDER,\
-                                        CATEGORIES_FOLDER, \
-                                        LANGUAGES_FOLDER
+    from em.taxonomies.config import (
+        TOPLEVEL_TAXONOMY_FOLDER,
+        COUNTRIES_FOLDER,
+        GENRE_FOLDER,
+        CATEGORIES_FOLDER,
+        LANGUAGES_FOLDER
+    )
     TAXONOMIES = True
 except ImportError:
     TAXONOMIES = False
@@ -118,20 +117,11 @@ class VideoView(BrowserView):
 
     @property
     def transcoding_rights(self):
-        # TODO: this is ugly! we shouldn't check for role names but for permissions
-        mtool = getToolByName(self.context, "portal_membership")
-        member = mtool.getAuthenticatedMember()
-        mb_id = member.getUserName()
-        member_roles = member.getRoles()
-
-        is_manager = 'Manager' in member_roles
-        is_reviewer = 'Reviewer' in member_roles
-        is_owner = mb_id in self.context.users_with_local_role('Owner')
-        """Return is_manager or is_owner. XXX make this an configurable option,
-        ie settable thru a configelet whether or not owner can see this
-        template, but for now just make it is_manager or is_reviewer.
-        """
-        return is_manager or is_reviewer
+        ps = self.context.restrictedTraverse('@@plone_portal_state')
+        if not ps.anonymous():
+            return ps.member().checkPermission(ReTranscodePermission,
+                                               self.context)
+        return False
 
     @property
     def bt_availability(self):
@@ -155,17 +145,21 @@ class VideoView(BrowserView):
     def transcoding(self):
         # XXX: refactor this!
         ret = {}
+        helpers = self.transcode_helpers
         try:
-            fname = self.transcode_helpers.fieldname
-            info = self.transcode_helpers.info[fname]
+            fname = helpers.fieldname
+            info = helpers.info[fname]
             for k in info.keys():
                 ret[k] = [info[k]['status'],
                           info[k]['status'] == 'ok' and info[k]['address'] + '/' + info[k]['path'] or \
                           info[k]['status'] == 'pending' and \
-                          self.transcode_helpers.get_progress(k) or '0']
+                          helpers.get_progress(k) or '0']
             return ret
-        except Exception, e:
+        except Exception:
             return {}
+
+    def is_transcoded(self):
+        return self.transcode_helpers.is_transcoded()
 
     def get_categories_dict(self, cats):
         """Uses the portal vocabularies to retrieve the video categories"""
